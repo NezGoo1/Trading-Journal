@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+  <title>Trading Journal</title>
+  <meta name="description" content="A private, offline trading journal with calendar P&L, stats, and analytics." />
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <meta name="theme-color" content="#0d1117" />
+
+  <!-- iOS Home Screen support -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Journal" />
+  <link rel="apple-touch-icon" href="./icons/icon-180.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="app-header__brand">
+        <span class="app-header__logo">📈</span>
+        <div>
+          <h1 class="app-header__title">Trading Journal</h1>
+          <p class="app-header__sub" id="headerSub">Local &amp; private · on your device</p>
+        </div>
+      </div>
+      <button class="btn btn--primary btn--add" id="addTradeBtn" aria-label="Add trade">
+        <span class="btn--add__plus">＋</span><span class="btn--add__label">Add Trade</span>
+      </button>
+    </header>
+
+    <!-- Views -->
+    <main class="views">
+      <section class="view view--active" id="view-dashboard" data-view="dashboard"></section>
+      <section class="view" id="view-calendar" data-view="calendar"></section>
+      <section class="view" id="view-trades" data-view="trades"></section>
+      <section class="view" id="view-analytics" data-view="analytics"></section>
+      <section class="view" id="view-data" data-view="data"></section>
+    </main>
+
+    <!-- Bottom nav (mobile-first) -->
+    <nav class="tabbar" id="tabbar">
+      <button class="tabbar__btn tabbar__btn--active" data-nav="dashboard">
+        <span class="tabbar__icon">▦</span><span class="tabbar__label">Home</span>
+      </button>
+      <button class="tabbar__btn" data-nav="calendar">
+        <span class="tabbar__icon">📅</span><span class="tabbar__label">Calendar</span>
+      </button>
+      <button class="tabbar__btn" data-nav="trades">
+        <span class="tabbar__icon">≣</span><span class="tabbar__label">Trades</span>
+      </button>
+      <button class="tabbar__btn" data-nav="analytics">
+        <span class="tabbar__icon">📊</span><span class="tabbar__label">Stats</span>
+      </button>
+      <button class="tabbar__btn" data-nav="data">
+        <span class="tabbar__icon">⚙</span><span class="tabbar__label">Data</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Trade modal -->
+  <div class="modal" id="tradeModal" aria-hidden="true">
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal__header">
+        <h2 id="modalTitle">Add Trade</h2>
+        <button class="modal__close" data-close-modal aria-label="Close">✕</button>
+      </div>
+      <form id="tradeForm" class="form">
+        <input type="hidden" id="f_id" />
+        <div class="form__row">
+          <label class="form__field">
+            <span>Date</span>
+            <input type="date" id="f_date" required />
+          </label>
+          <label class="form__field">
+            <span>Symbol</span>
+            <input type="text" id="f_symbol" placeholder="AAPL" autocapitalize="characters" required />
+          </label>
+        </div>
+        <div class="form__row">
+          <label class="form__field">
+            <span>Side</span>
+            <select id="f_side">
+              <option value="long">Long</option>
+              <option value="short">Short</option>
+            </select>
+          </label>
+          <label class="form__field">
+            <span>Quantity</span>
+            <input type="number" id="f_qty" step="any" inputmode="decimal" placeholder="100" />
+          </label>
+        </div>
+        <div class="form__row">
+          <label class="form__field">
+            <span>Entry price</span>
+            <input type="number" id="f_entry" step="any" inputmode="decimal" placeholder="0.00" />
+          </label>
+          <label class="form__field">
+            <span>Exit price</span>
+            <input type="number" id="f_exit" step="any" inputmode="decimal" placeholder="0.00" />
+          </label>
+        </div>
+        <div class="form__row">
+          <label class="form__field">
+            <span>Fees / commissions</span>
+            <input type="number" id="f_fees" step="any" inputmode="decimal" placeholder="0.00" />
+          </label>
+          <label class="form__field">
+            <span>Net P&amp;L <em class="form__hint" id="pnlHint">(auto)</em></span>
+            <input type="number" id="f_pnl" step="any" inputmode="decimal" placeholder="0.00" />
+          </label>
+        </div>
+        <div class="form__row">
+          <label class="form__field">
+            <span>Strategy / setup</span>
+            <input type="text" id="f_strategy" placeholder="Breakout" list="strategyList" />
+            <datalist id="strategyList"></datalist>
+          </label>
+          <label class="form__field">
+            <span>R multiple <em class="form__hint">(optional)</em></span>
+            <input type="number" id="f_r" step="any" inputmode="decimal" placeholder="e.g. 2" />
+          </label>
+        </div>
+        <label class="form__field">
+          <span>Tags <em class="form__hint">(comma separated)</em></span>
+          <input type="text" id="f_tags" placeholder="momentum, gap-up" />
+        </label>
+        <label class="form__field">
+          <span>Notes</span>
+          <textarea id="f_notes" rows="3" placeholder="What was the plan? What did you learn?"></textarea>
+        </label>
+        <div class="form__actions">
+          <button type="button" class="btn btn--danger btn--ghost" id="deleteTradeBtn" hidden>Delete</button>
+          <div class="form__actions-right">
+            <button type="button" class="btn btn--ghost" data-close-modal>Cancel</button>
+            <button type="submit" class="btn btn--primary">Save Trade</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Day detail modal -->
+  <div class="modal" id="dayModal" aria-hidden="true">
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="dayModalTitle">
+      <div class="modal__header">
+        <h2 id="dayModalTitle">Day</h2>
+        <button class="modal__close" data-close-modal aria-label="Close">✕</button>
+      </div>
+      <div id="dayModalBody" class="day-detail"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./js/storage.js"></script>
+  <script src="./js/calc.js"></script>
+  <script src="./js/charts.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
