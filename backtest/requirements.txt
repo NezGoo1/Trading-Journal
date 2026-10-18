@@ -1,0 +1,5 @@
+pandas>=2.2
+numpy>=1.24
+# optional
+matplotlib>=3.7   # chart.png
+# yfinance>=0.2   # --yf downloads

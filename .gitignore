@@ -3,3 +3,7 @@ scratch-shots/
 package-lock.json
 .DS_Store
 *.log
+
+# Backtest outputs
+backtest/results/
+__pycache__/

@@ -13,6 +13,10 @@ A private, **offline-first trading journal** you can install on your iPhone Home
 - **💾 Your data** — one‑tap **CSV** and **JSON** export/import (backups), currency + starting‑balance settings, and sample data to explore.
 - **📲 Installable PWA** — works fully offline once added to your Home Screen.
 
+## Backtest a strategy (Python)
+
+The [`backtest/`](backtest/) folder has a Python template. Plug your entry, exit and stop rules into `backtest/my_strategy.py`, run `python backtest/run_backtest.py`, and get a full performance report. It also writes a `journal_import.csv` you can load into this app with **Import CSV**. See [backtest/README.md](backtest/README.md).
+
 ## Add to your iPhone Home Screen
 
 1. Open the site in **Safari** (see *Hosting* below for the URL).
